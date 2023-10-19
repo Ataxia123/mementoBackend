@@ -27,12 +27,12 @@ console.log(__dirname);
 
 
 
-dbRouter.get('/database', async (res) => {
+dbRouter.get('/database', async (req, res) => {
   // Use connect method to connect to the server
   const db = client.db(dbName); // Connect to the Database
-  const collection = db.collection('1playerCollection2323333'); // Access to 'players' collection
+  const collection = db.collection('plyr'); // Access to 'players' collection
   // Access to 'players' collection
-  const itemCollection = db.collection('itemCollection2334'); // 
+  const itemCollection = db.collection('itm'); // 
 
 
   const items = await itemCollection.find({}).toArray();
@@ -47,108 +47,98 @@ dbRouter.post('/db', async (req, res) => {
   // Write the generated HTML to the document body
   passport.authenticate('bnet', { failureMessage: 'Woopsie' });
   // Parse JSON body
-  const player = await req.body;
 
 
 
   const db = client.db(dbName); // Connect to the database
-  const collection = db.collection('1playerCollection2323333');
-  const itemCollection = db.collection('itemCollection2334'); // 
+  const collection = db.collection('plyr');
+  const itemCollection = db.collection('itm'); // 
 
-  itemCollection.createIndex({ ItemId: 1 }, { unique: true })
-  collection.createIndex({ id: 1 }, { unique: true })
+  // assumed input
+  const inputPlayerData = req.body;
 
-
-
-
-
-  if (player.equipped_items) {
-    try {
-      let index = await collection.findOne({ id: player.id });
-
-      console.log(index, player)
-      if (index === null && player !== null) {
-        collection.insertOne(player); // inser
-        console.log('inserted' + player)
-      }
-
-
-
-    } catch (err) {
-
-      console.log(err.message)
-    }
-    let promiseArray = [];
-    await player?.equipped_items.map(async (item) => {
-
-      let itemUrl = `https://www.wowhead.com/item=${item.item.id}&xml`
-      var parser = new xml2js.Parser();
-      let data = '';
-
-
-      promiseArray.push(new Promise(async (resolve) => {
-        https.get(itemUrl, function(res) {
-          try {
-            if (res.statusCode >= 200 && res.statusCode < 400) {
-              res.on('data', function(data_) {
-                data += data_.toString();
-
-              });
-              res.on('end', function() {
-
-                parser.parseString(data, async function(err, result) {
-                  let dispid = result.wowhead.item[0].json[0];
-
-                  let response = await useRegex(dispid)
-
-
-                  console.log(response)
-                  if (response === undefined) return;
-                  let index = await itemCollection.findOne({ ItemId: item.item.id });
-                  console.log(index)
-                  try {
-
-                    if (index === null && response !== null) {
-                      itemCollection.insertOne({ ItemId: item.item.id, displayId: response })
-                      console.log('inserted' + item.item.id + ' ' + response + ' ' + item)
-                    }
-
-
-
-
-
-                  } catch (err) {
-
-                    console.log(err.message)
-                  }
-
-
-
-
-                });
-
-
-
-
-              })
-              resolve(body)
-
-            }
-
-          } catch (e) {
-            parser.on('error', function(err) { console.log('Parser error', err); });
-          }
-
-
-        })
-
-
-      })
-      );
-    })
-    await Promise.all(promiseArray)
-    res.json({ status: 'success', message: 'Players added to DB', body: promiseArray });
+  // function to save player
+  async function savePlayer(playerData) {
+    // Save only if player id does not exist
+    await collection.updateOne(
+      { id: playerData.id },
+      { $setOnInsert: playerData },
+      { upsert: true }, // this creates new document if none match the filter
+    );
   }
+
+  // function to save item from given player
+  async function savePlayerItems(item, playerData) {
+    let itemId = item.item.id;
+    let itemInfoUrl = `https://www.wowhead.com/item=${itemId}&xml`;
+
+    let data = '';
+    const parser = new xml2js.Parser();
+    https.get(itemInfoUrl, function(res) {
+      try {
+        if (res.statusCode >= 200 && res.statusCode < 400) {
+          res.on('data', function(data_) {
+            data += data_.toString();
+
+          });
+          res.on('end', function() {
+
+            parser.parseString(data, async function(err, result) {
+              let dispid = result.wowhead.item[0].json[0];
+              let response = useRegex(dispid)
+              console.log(response)
+
+              const itemData = {
+                itemId: itemId,
+                displayId: response,
+                playerName: playerData.name,
+              };
+              return await itemCollection.updateOne(
+                { itemId: itemId },
+                { $setOnInsert: itemData },
+                { upsert: true }, // this creates new document if none match the filter
+              );
+              // Save only if item id does not exist for that player
+
+            });
+
+          })
+
+
+
+        }
+      } catch (e) {
+        parser.on('error', function(err) { console.log('Parser error', err); });
+      }
+    });
+
+
+  }
+
+  // Saving player and item
+  async function savePlayerAndItems(playerData) {
+    const playerItems = playerData.equipped_items || [];
+
+    try {
+      await savePlayer(playerData);
+      await Promise.all(playerItems.map(item => savePlayerItems(item, playerData)));
+    } catch (error) {
+      return console.error('Unable to save player data. Error:', error);
+    }
+
+    return console.log('Player data saved');
+  }
+
+  // Finally call the function with input
+  savePlayerAndItems(inputPlayerData);
+
+
+
+
+
+
+  res.json({ status: 'success', message: 'Players added to DB', body: inputPlayerData });
+
 
 
 })
