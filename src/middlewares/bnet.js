@@ -5,8 +5,7 @@ import refresh from 'passport-oauth2-refresh';
 config();
 
 
-const BNET_ID = process.env.BNET_ID;
-const BNET_SECRET = process.env.BNET_SECRET;
+
 const OAUTH_CALLBACK_URL = "http://localhost:3000/oauth/battlenet/callback";
 
 // Review full list of available scopes here: https://develop.battle.net/documentation/guides/using-oauth
@@ -35,8 +34,8 @@ const someval = makeid(5);
 
 const strategy = new BnetStrategy(
   {
-    clientID: BNET_ID,
-    clientSecret: BNET_SECRET,
+    clientID: process.env.BNET_ID,
+    clientSecret: process.env.BNET_SECRET,
     scope: OAUTH_SCOPES,
     callbackURL: OAUTH_CALLBACK_URL,
     state: someval
