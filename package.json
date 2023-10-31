@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "webpack && nodemon ./src/index.js",
-    "build": "webpack"
+    "dev": "nodemon ./src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -28,7 +27,6 @@
     "passport-oauth2-refresh": "^2.2.0",
     "pug": "^3.0.2",
     "ts-loader": "^9.4.4",
-    "wow-model-viewer": "^1.1.3",
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
