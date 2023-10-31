@@ -6,7 +6,7 @@ config();
 
 
 
-const OAUTH_CALLBACK_URL = "https://memento-mori-nextjs.vercel.app/oauth/battlenet/callback";
+const OAUTH_CALLBACK_URL = "https://memento-backend-cf191cb4715d.herokuapp.com/oauth/battlenet/callback";
 
 // Review full list of available scopes here: https://develop.battle.net/documentation/guides/using-oauth
 const OAUTH_SCOPES = process.env.OAUTH_SCOPES || "wow.profile";
