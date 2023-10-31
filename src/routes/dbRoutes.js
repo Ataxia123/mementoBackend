@@ -145,59 +145,8 @@ dbRouter.post('/db', async (req, res) => {
 
 
 
-dbRouter.get('/render', (req, res) => {
-  const { characterId: player, name, gender, race, facial_hair, HEAD, SHOULDERS, CHEST, WAIST, LEGS, FEET, WRIST, HANDS, BACK, MAIN_HAND, OFF_HAND } = req.query;
-  // fetch displayID library 
-  // match itemID -> get DisplayID Eg: {15304: 10013 }
-  // 
-  //
-  console.log("rendering")
-  res.render('./renderer/test.ejs', { title: player, counter: Number(race), name: name, gender: gender, facial_hair: facial_hair });
-  /*  const itemCollection = db.collection('itemCollection23'); // 
-  const db = client.db(dbName); // Connect to the database
-
-    let inventory = {
-    HEAD: HEAD ? HEAD : null,
-    SHOULDERS: SHOULDERS ? SHOULDERS : null,
-    CHEST: CHEST ? CHEST : null,
-    WAIST: WAIST ? WAIST : null,
-    LEGS: LEGS ? LEGS : null,
-    FEET: FEET ? FEET : null,
-    WRIST: WRIST ? WRIST : null,
-    HANDS: HANDS ? HANDS : null,
-    BACK: BACK ? BACK : null,
-    MAIN_HAND: MAIN_HAND ? MAIN_HAND : null,
-    OFF_HAND: OFF_HAND ? OFF_HAND : null,
-  };
-  let promiseArray = [];
-  try {
-    promiseArray.push(new Promise(async (resolve, reject) => {
-      for (const [key, value] of Object.entries(inventory)) {
-        itemCollection.findOne({ ItemId: value }, (err, result) => {
-
-          inventory[key] = result.displayId;
-
-          console.log(inventory, 'inventory')
 
 
-
-
-        })
-      }
-      resolve(inventory)
-    }));
-
-    await Promise.all(promiseArray).then(async (values) => {
-      console.log(values, 'values')
-
-
-
-    })
-  } catch (err) {
-    console.log(err)
-  }*/
-
-})
 
 
 export { dbRouter };
