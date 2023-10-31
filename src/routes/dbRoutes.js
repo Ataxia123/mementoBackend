@@ -8,7 +8,7 @@ import xml2js from 'xml2js';
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-const url = 'mongodb://127.0.0.1:27017';
+const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
 await client.connect();
 console.log('Connected successfully to server');

@@ -19,10 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 app.use(xmlparser());
-app.use(express.static(path.join(__dirname, "../dist/")));
 console.log(__dirname);
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../dist/"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
