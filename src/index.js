@@ -35,7 +35,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ['http://localhost:3001'],   // replace with your frontend url
+    origin: ['https://memento-mori-nextjs.vercel.app/'],   // replace with your frontend url
     credentials: true,
     optionsSuccessStatus: 200
   })
