@@ -6,7 +6,7 @@ config();
 
 
 
-const OAUTH_CALLBACK_URL = "http://localhost:3000/oauth/battlenet/callback";
+const OAUTH_CALLBACK_URL = "/oauth/battlenet/callback";
 
 // Review full list of available scopes here: https://develop.battle.net/documentation/guides/using-oauth
 const OAUTH_SCOPES = process.env.OAUTH_SCOPES || "wow.profile";
