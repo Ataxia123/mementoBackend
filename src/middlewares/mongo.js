@@ -7,7 +7,7 @@ import { MongoClient } from 'mongodb'
 const client = new MongoClient(process.env.MONGODB_URI);
 
 // Database Name
-const dbName = 'myProject';
+const dbName = 'mementoMori';
 
 async function main() {
   // Use connect method to connect to the server
