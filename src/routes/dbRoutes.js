@@ -29,7 +29,7 @@ console.log(__dirname);
 
 dbRouter.get('/database', async (req, res) => {
   // Use connect method to connect to the server
-  const db = client.db(dbName, { dbName: 'mementoMori' }); // Connect to the Database
+  const db = client.db(dbName); // Connect to the Database
   const collection = db.collection('players'); // Access to 'players' collection
   // Access to 'players' collection
   const itemCollection = db.collection('items'); // 
@@ -50,7 +50,7 @@ dbRouter.post('/db', async (req, res) => {
 
 
 
-  const db = client.db(dbName, { dbName: 'mementoMori' }); // Connect to the database
+  const db = client.db(dbName); // Connect to the database
   const collection = db.collection('players');
   const itemCollection = db.collection('items'); // 
 
