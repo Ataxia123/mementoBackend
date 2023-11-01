@@ -5,7 +5,6 @@ import { dbRouter } from "./routes/dbRoutes.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import "./middlewares/bnet.js";
-import "./middlewares/mongo.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import path from 'path';
