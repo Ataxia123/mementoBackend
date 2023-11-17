@@ -54,7 +54,6 @@ dbRouter.post('/db', async (req, res) => {
   const db = client.db(dbName); // Connect to the database
   const collection = db.collection('players');
   const itemCollection = db.collection('items'); // 
-  const attestationCollection = db.collection('attestations'); //
   // assumed input
   const inputPlayerData = req.body;
 
@@ -66,11 +65,7 @@ dbRouter.post('/db', async (req, res) => {
       { $setOnInsert: playerData },
       { upsert: true }, // this creates new document if none match the filter
     );
-    await attestationCollection.updateOne(
-      { id: playerData.id },
-      { $setOnInsert: playerData.Attestation },
-      { upsert: true }, // this creates new document if none match the filter
-    );
+
   }
 
   // function to save item from given player
