@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb'
 import { fileURLToPath } from 'url';
 import https from 'https';
 import xml2js from 'xml2js';
-import { SignedOffchainAttestation } from "@ethereum-attestation-service/eas-sdk";
+
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
