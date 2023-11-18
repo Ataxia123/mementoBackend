@@ -34,11 +34,11 @@ dbRouter.get('/database', async (req, res) => {
   const collection = db.collection('players'); // Access to 'players' collection
   // Access to 'players' collection
   const itemCollection = db.collection('items'); // 
-
+  const attestationsDB = db.collection('attestations');
 
   const items = await itemCollection.find({}).toArray();
   const players = await collection.find({}).toArray();
-  const attestations = await collection.find({}).toArray();
+  const attestations = await attestationsDB.find({}).toArray();
 
   // Get all players from collection
   res.json({ items: items, players: players, attestations: attestations }); // Response to MongoClient
@@ -54,7 +54,7 @@ dbRouter.post('/db', async (req, res) => {
 
   const db = client.db(dbName); // Connect to the database
   const collection = db.collection('players');
-  const attestations = db.collection('attestations');
+  const attestationsDB = db.collection('attestations');
   const itemCollection = db.collection('items'); // 
   // assumed input
   const inputPlayerData = req.body;
@@ -67,7 +67,7 @@ dbRouter.post('/db', async (req, res) => {
       { $setOnInsert: playerData },
       { upsert: true }, // this creates new document if none match the filter
     );
-    await attestations.updateOne(
+    await attestationsDB.updateOne(
       { id: playerData.id },
       { $setOnInsert: playerData.Attestation },
       { upsert: true }, // this creates new document if none match the filter
