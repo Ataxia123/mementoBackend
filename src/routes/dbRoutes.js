@@ -67,9 +67,13 @@ dbRouter.post('/db', async (req, res) => {
       { $setOnInsert: playerData },
       { upsert: true }, // this creates new document if none match the filter
     );
+    const attestationData = {
+      id: playerData.id,
+      Attestation: playerData.Attestation,
+    };
     await attestationsDB.updateOne(
       { id: playerData.id },
-      { $setOnInsert: playerData.Attestation },
+      { $setOnInsert: attestationData },
       { upsert: true }, // this creates new document if none match the filter
     );
   }
