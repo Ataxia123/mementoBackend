@@ -38,9 +38,10 @@ dbRouter.get('/database', async (req, res) => {
 
   const items = await itemCollection.find({}).toArray();
   const players = await collection.find({}).toArray();
+  const attestations = await collection.find({}).toArray();
 
   // Get all players from collection
-  res.json({ items: items, players: players }); // Response to MongoClient
+  res.json({ items: items, players: players, attestations: attestations }); // Response to MongoClient
 });
 
 
@@ -53,6 +54,7 @@ dbRouter.post('/db', async (req, res) => {
 
   const db = client.db(dbName); // Connect to the database
   const collection = db.collection('players');
+  const attestations = db.collection('attestations');
   const itemCollection = db.collection('items'); // 
   // assumed input
   const inputPlayerData = req.body;
@@ -65,9 +67,12 @@ dbRouter.post('/db', async (req, res) => {
       { $setOnInsert: playerData },
       { upsert: true }, // this creates new document if none match the filter
     );
-
+    await attestations.updateOne(
+      { id: playerData.id },
+      { $setOnInsert: playerData.Attestation },
+      { upsert: true }, // this creates new document if none match the filter
+    );
   }
-
   // function to save item from given player
   async function savePlayerItems(item, playerData) {
     let itemId = item.item.id;
