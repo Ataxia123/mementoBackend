@@ -144,14 +144,7 @@ dbRouter.post('/db', async (req, res) => {
   // Finally call the function with input
   savePlayerAndItems(inputPlayerData);
 
-
-
-
-
-
   res.json({ status: 'success', message: 'Players added to DB', body: inputPlayerData });
-
-
 
 })
 
@@ -162,7 +155,6 @@ dbRouter.post('/attest', async (req, res) => {
   // Access to 'players' collection
 
 
-  const respects = await respectsCol.find({}).toArray();
 
   const inputPlayerData = req.body;
 
@@ -174,7 +166,7 @@ dbRouter.post('/attest', async (req, res) => {
       id: playerData._id,
       Attestation: JSON.parse(playerData.attestation),
     };
-    await respects.updateOne(
+    await respectsCol.updateOne(
       { id: playerData._id },
       { $setOnInsert: attestationData },
       { upsert: true }, // this creates new document if none match the filter
