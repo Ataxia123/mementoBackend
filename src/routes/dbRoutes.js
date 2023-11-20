@@ -69,7 +69,7 @@ dbRouter.post('/db', async (req, res) => {
     );
     const attestationData = {
       id: playerData.id,
-      Attestation: JSON.parse(playerData.Attestation),
+      Attestation: JSON.parse(playerData.attestation),
     };
     await attestationsDB.updateOne(
       { id: playerData.id },
