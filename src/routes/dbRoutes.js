@@ -153,9 +153,34 @@ dbRouter.post('/db', async (req, res) => {
 
 })
 
+dbRouter.get('/attest', async (req, res) => {
+  // Use connect method to connect to the server
+  const db = client.db(dbName); // Connect to the Database
+  const respectsCol = db.collection('respects'); // Access to 'players' collection
+  // Access to 'players' collection
 
 
+  const respects = await respectsCol.find({}).toArray();
 
+  const inputPlayerData = req.body;
+
+  // function to save player
+  async function payRespects(playerData) {
+    // Save only if player id does not exist
+    const attestationData = {
+      Attestation: JSON.parse(playerData),
+    };
+    await respects.updateOne(
+      { id: playerData._id },
+      { $setOnInsert: attestationData },
+      { upsert: true }, // this creates new document if none match the filter
+    );
+  }
+  payRespects(inputPlayerData);
+  // Get all players from collection
+  res.json({ respects: respects }); // Response to MongoClient
+
+});
 
 
 
