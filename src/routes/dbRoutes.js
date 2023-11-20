@@ -180,7 +180,8 @@ dbRouter.get('/attest', async (req, res) => {
   }
   payRespects(inputPlayerData);
   // Get all players from collection
-  res.json({ respects: respects }); // Response to MongoClient
+  res.json({ status: 'success', message: 'Players added to DB', body: inputPlayerData });
+
 
 });
 
