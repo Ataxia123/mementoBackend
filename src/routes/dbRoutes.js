@@ -163,13 +163,14 @@ dbRouter.get('/attest', async (req, res) => {
   const respects = await respectsCol.find({}).toArray();
 
   const inputPlayerData = req.body;
-  JSON.parse(inputPlayerData);
+
 
   // function to save player
   async function payRespects(playerData) {
     // Save only if player id does not exist
     const attestationData = {
-      Attestation: playerData,
+      id: playerData._id,
+      Attestation: JSON.parse(playerData.attestation),
     };
     await respects.updateOne(
       { id: playerData._id },
