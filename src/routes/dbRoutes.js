@@ -163,11 +163,11 @@ dbRouter.post('/attest', async (req, res) => {
   async function payRespects(playerData) {
     // Save only if player id does not exist
     const attestationData = {
-      id: playerData._id,
+      id: playerData.id,
       Attestation: JSON.parse(playerData.attestation),
     };
     await respectsCol.updateOne(
-      { id: playerData._id },
+      { id: playerData.id },
       { $setOnInsert: attestationData },
       { upsert: true }, // this creates new document if none match the filter
     );
