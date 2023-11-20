@@ -34,7 +34,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ['https://www.mmorionchain.com'],   // replace with your frontend url
+    origin: [process.env.URL],   // replace with your frontend url
     credentials: true,
     optionsSuccessStatus: 200
   })
