@@ -35,13 +35,15 @@ dbRouter.get('/database', async (req, res) => {
   // Access to 'players' collection
   const itemCollection = db.collection('items'); // 
   const attestationsDB = db.collection('attestations');
+  const respectsCollection = db.collection('respects')
 
   const items = await itemCollection.find({}).toArray();
   const players = await collection.find({}).toArray();
   const attestations = await attestationsDB.find({}).toArray();
+  const respects = await respectsCollection.find({}).toArray();
 
   // Get all players from collection
-  res.json({ items: items, players: players, attestations: attestations }); // Response to MongoClient
+  res.json({ items: items, players: players, attestations: attestations, respects: respects }); // Response to MongoClient
 });
 
 
@@ -153,7 +155,7 @@ dbRouter.post('/db', async (req, res) => {
 
 })
 
-dbRouter.get('/attest', async (req, res) => {
+dbRouter.post('/attest', async (req, res) => {
   // Use connect method to connect to the server
   const db = client.db(dbName); // Connect to the Database
   const respectsCol = db.collection('respects'); // Access to 'players' collection
