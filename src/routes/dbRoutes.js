@@ -170,7 +170,7 @@ dbRouter.post('/attest', async (req, res) => {
     };
     await respects.updateOne(
       { id: playerData.uid },
-      { $setOnInsert: { attestations: attestationData } },
+      { $setOnInsert: attestationData },
       { upsert: true }, // this creates new document if none match the filter
     );
 
