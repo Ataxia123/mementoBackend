@@ -151,9 +151,9 @@ dbRouter.post('/db', async (req, res) => {
 dbRouter.post('/attest', async (req, res) => {
   // Use connect method to connect to the server
   const db = client.db(dbName); // Connect to the Database
-  const respectsCol = db.collection('respects'); // Access to 'players' collection
+  const respects = db.collection('respects'); // Access to 'players' collection
   // Access to 'players' collection
-
+  const respectsTally = db.collection('respectsTally');
 
 
   const inputPlayerData = req.body;
@@ -168,7 +168,13 @@ dbRouter.post('/attest', async (req, res) => {
       prayer: playerData.prayer,
       Attestation: JSON.parse(playerData.attestation),
     };
-    await respectsCol.updateOne(
+    await respects.updateOne(
+      { id: playerData.uid },
+      { $setOnInsert: { attestations: attestationData } },
+      { upsert: true }, // this creates new document if none match the filter
+    );
+
+    await respectsTally.updateOne(
       { id: playerData.id },
       { $push: { attestations: attestationData } },
       { upsert: true }, // this creates new document if none match the filter
