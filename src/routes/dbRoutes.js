@@ -34,16 +34,16 @@ dbRouter.get('/database', async (req, res) => {
   const collection = db.collection('players'); // Access to 'players' collection
   // Access to 'players' collection
   const itemCollection = db.collection('items'); // 
-  const attestationsDB = db.collection('attestations');
   const respectsCollection = db.collection('respects')
+  const respectsTally = db.collection('respectsTally');
 
   const items = await itemCollection.find({}).toArray();
   const players = await collection.find({}).toArray();
-  const attestations = await attestationsDB.find({}).toArray();
   const respects = await respectsCollection.find({}).toArray();
+  const respectsTallies = await respectsTally.find({}).toArray();
 
   // Get all players from collection
-  res.json({ items: items, players: players, attestations: attestations, respects: respects }); // Response to MongoClient
+  res.json({ items: items, players: players, respectsTallies: respectsTallies, respects: respects }); // Response to MongoClient
 });
 
 
