@@ -169,13 +169,12 @@ dbRouter.post('/attest', async (req, res) => {
       Attestation: JSON.parse(playerData.attestation),
     };
     await respectsCol.updateOne(
-      { id: playerData.hero },
+      { id: playerData.id },
+      { $addToSet: attestationData },
+
       { upsert: true }, // this creates new document if none match the filter
     );
-    await respectsCol.updateOne(
-      { id: playerData.hero },
-      { $addToSet: attestationData },
-    );
+
   }
   payRespects(inputPlayerData);
   // Get all players from collection
