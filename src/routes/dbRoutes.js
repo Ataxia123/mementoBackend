@@ -173,6 +173,13 @@ dbRouter.post('/attest', async (req, res) => {
             { $setOnInsert: attestationData },
             { upsert: true }, // this creates new document if none match the filter
         );
+
+        await respectsTally.updateOne(
+            { id: playerData.id },
+            { $push: { attestations: attestationData } },
+            { upsert: true }, // this creates new document if none match the filter
+        );
+
     }
     payRespects(inputPlayerData);
     // Get all players from collection
