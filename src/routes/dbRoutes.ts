@@ -10,12 +10,12 @@ import type { Request, Response } from "express";
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-const url = process.env.MONGODB_URI || 'mongodb://0.0.0.0:27017'
+const url = process.env.MONGODB_URL || 'mongodb://0.0.0.0:27017'
 const client = new MongoClient(url);
 await client.connect();
 console.log('Connected successfully to server');
 // Database Name
-const dbName = 'mementoMori';
+const dbName = 'aiUniverse';
 const dbRouter = Router();
 
 const useRegex = (input: any) => {

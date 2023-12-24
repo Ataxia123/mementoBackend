@@ -1,7 +1,7 @@
 // /pages/api/generateAlienLanguage.ts
 import type { Request, Response } from "express";
 import OpenAI from "openai";
-import type { MetaScanData, NftData, PlanetData } from "../../../types/appTypes.ts"
+import type { MetaScanData, NftData, PlanetData } from "../../../types/appTypes.js"
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_AUTH_TOKEN,
@@ -14,11 +14,11 @@ async function generateAlienLanguage(metaScanData: MetaScanData, nftData: NftDat
             content: `"You are the targetting computer of a ship in 
             the Alliance of the Infinite Universe. 
             You have just recieved a transmission from the following coordinates:
-            ${metaScanData.currentLocation}.
+            ${metaScanData.locationBeacon0}.
             You need to need to triangulate the following information and issue a report 
             scan  with the following fields: 
          {
-            locationCoordinates: ${metaScanData.currentLocation}.
+            locationCoordinates: ${metaScanData.locationBeacon0}.
             planetId: string;
             Scan: {
             locationName: string,
