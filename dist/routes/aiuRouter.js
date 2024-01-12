@@ -82,7 +82,7 @@ async function rag(llm: LLM, embedModel: BaseEmbedding, query: string) {
     console.log(ragResponse);
 })();
 */
-async function llamaindex(payload, id, capname) {
+async function llamaindex(payload, id) {
     const vectorStore = new MongoDBAtlasVectorSearch({
         mongodbClient: client,
         dbName,
@@ -97,7 +97,6 @@ async function llamaindex(payload, id, capname) {
     // Split text and create embeddings. Store them in a VectorStoreIndex
     await VectorStoreIndex.fromDocuments([document], { storageContext });
     console.log(`Successfully created embeddings in the MongoDB collection ${dbName}`);
-    await newDay(capname);
 }
 async function loadAndIndex() {
     // Create a new client and connect to the server
@@ -180,7 +179,7 @@ aiuRouter.post('/codex', async (req, res) => {
                 data: codexData,
                 full_text: JSON.stringify(codexData),
             };
-            await llamaindex(attestationRecord.full_text, attestationRecord._id, capname);
+            //await llamaindex(attestationRecord.full_text, attestationRecord._id, capname);
             await heroCodex.updateOne({ id: attestationRecord._id }, { $setOnInsert: attestationRecord }, { upsert: true });
             res.status(200).json({ message: "Data embedded and saved successfully" });
         }
@@ -220,7 +219,6 @@ aiuRouter.post('/attest', async (req, res) => {
             pilotData: pilot,
             locationId: shipData.location.locationId,
             shipData: shipData,
-            quadrantId: shipData.location.locationId,
             nearestPlanetId: shipData.location.nearestLocationId,
             locationData: shipData.location,
             heroCodexId,
@@ -244,19 +242,21 @@ aiuRouter.get('/database', async (req, res) => {
     const collection = db.collection('AIU_IPRs'); // Access to 'players' collection
     // Access to 'players' collection
     // Access to 'players' collection
-    const planetCollection = db.collection('planets');
-    const missionCollection = db.collection('missions');
-    const encounterCollection = db.collection('encounters');
-    const locationCollection = db.collection('locations');
+    // const planetCollection = db.collection('planets')
+    // const missionCollection = db.collection('missions');
+    // const encounterCollection = db.collection('encounters');
+    // const locationCollection = db.collection('locations');
+    //const quipuxCollection = db.collection('quipuxs');
     const heroCodexCollection = db.collection('heroCodex');
     const heroCodexes = await heroCodexCollection.find({}).toArray();
-    const quipuxCollection = db.collection('quipuxs');
-    const locations = await locationCollection.find({}).toArray();
-    const missions = await missionCollection.find({}).toArray();
-    const encounters = await encounterCollection.find({}).toArray();
-    const quipux = await quipuxCollection.find({}).toArray();
-    const planets = await planetCollection.find({}).toArray();
-    const database = { locations, missions, heroCodexes, encounters, quipux, planets };
+    const pilotData = db.collection('pilots'); // 
+    const beaconData = db.collection('beacons'); // 
+    const locations = await beaconData.find({}).toArray();
+    const pilots = await pilotData.find({}).toArray();
+    //const encounters = await encounterCollection.find({}).toArray();
+    //const quipux = await quipuxCollection.find({}).toArray();
+    //const planets = await planetCollection.find({}).toArray();
+    const database = { heroCodexes, locations, pilots };
     // Get all players from collection
     res.json({ database }); // Response to MongoClient
 });
@@ -277,6 +277,85 @@ aiuRouter.post('/userPilot', async (req, res) => {
     catch (error) {
         res.status(500).json({ error: error });
     }
+});
+aiuRouter.post('/heroCodex', async (req, res) => {
+    // Write the generated HTML to the document body
+    // Parse JSON body
+    const playerData = await req.body;
+    const db = client.db(dbName); // Connect to the database
+    const heroCodex = db.collection('heroCodex'); // 
+    const beaconDb = db.collection('beacons'); // 
+    // assumed input
+    const beaconData = playerData.beaconData;
+    const attestationData = {
+        _id: playerData.heroCodex.heroId,
+        Attestation: playerData,
+    };
+    await llamaindex(JSON.stringify(attestationData), attestationData._id);
+    await heroCodex.updateOne({ _id: playerData.heroCodex.heroId }, { $setOnInsert: attestationData }, { upsert: true });
+    const beData = {
+        _id: playerData.beaconData.locationId,
+        beaconData,
+        fullText: JSON.stringify(playerData.beaconData),
+    };
+    await beaconDb.updateOne({ _id: beaconData.locationId }, { $setOnInsert: beData }, { upsert: true });
+    res.json({ status: 'success', message: 'Players added to DB' });
+});
+aiuRouter.post('/pilotShip', async (req, res) => {
+    // Write the generated HTML to the document body
+    // Parse JSON body
+    const load = await req.body;
+    const db = client.db(dbName); // Connect to the database
+    const pilotCollection = db.collection('pilots'); // 
+    const beaconDb = db.collection('beacons'); // 
+    // assumed input
+    const beaconData = load.beaconData;
+    console.log(load, "load");
+    const attestationData = {
+        _id: load.address,
+        address: load.address,
+        load,
+        fullText: JSON.stringify(load),
+    };
+    await llamaindex(JSON.stringify(attestationData.fullText), attestationData._id);
+    await pilotCollection.updateOne({ _id: load.address }, //address
+    { $setOnInsert: attestationData }, { upsert: true });
+    const beData = {
+        _id: beaconData.locationId,
+        beaconData,
+        fullText: JSON.stringify(beaconData),
+    };
+    await beaconDb.updateOne({ _id: beaconData.locationId }, { $setOnInsert: beData }, { upsert: true });
+    res.json({ status: 'success', message: 'Players added to DB' });
+});
+aiuRouter.post('/quipuxUpdate', async (req, res) => {
+    // Write the generated HTML to the document body
+    // Parse JSON body
+    const da = await req.body;
+    const load = da.newManifest;
+    console.log(load, "load");
+    const db = client.db(dbName); // Connect to the database
+    const pilotCollection = db.collection('pilots'); // 
+    const beaconDb = db.collection('beacons'); // 
+    // assumed input
+    const beaconData = load.currentLocation;
+    console.log(load, "load");
+    const attestationData = {
+        _id: load.uid,
+        address: load.address,
+        load,
+        fullText: JSON.stringify(load),
+    };
+    await llamaindex(attestationData.fullText, attestationData._id);
+    await pilotCollection.updateOne({ _id: load.uid }, //address
+    { $setOnInsert: attestationData }, { upsert: true });
+    const beData = {
+        _id: load.currentLocation.locationId,
+        beaconData,
+        fullText: JSON.stringify(load.beaconData),
+    };
+    await beaconDb.updateOne({ _id: beaconData.quadrantId }, { $setOnInsert: beData }, { upsert: true });
+    res.json({ status: 'success', message: 'Players added to DB' });
 });
 aiuRouter.post('/db', async (req, res) => {
     // Write the generated HTML to the document body
